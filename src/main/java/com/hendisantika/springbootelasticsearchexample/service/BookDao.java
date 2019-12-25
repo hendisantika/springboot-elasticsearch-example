@@ -1,14 +1,19 @@
 package com.hendisantika.springbootelasticsearchexample.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hendisantika.springbootelasticsearchexample.domain.Book;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.data.elasticsearch.ElasticsearchException;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,5 +62,24 @@ public class BookDao {
         }
         Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
         return sourceAsMap;
+    }
+
+    public Map<String, Object> updateBookById(String id, Book book) {
+        UpdateRequest updateRequest = new UpdateRequest(INDEX, TYPE, id)
+                .fetchSource(true);    // Fetch Object after its update
+        Map<String, Object> error = new HashMap<>();
+        error.put("Error", "Unable to update book");
+        try {
+            String bookJson = objectMapper.writeValueAsString(book);
+            updateRequest.doc(bookJson, XContentType.JSON);
+            UpdateResponse updateResponse = restHighLevelClient.update(updateRequest);
+            Map<String, Object> sourceAsMap = updateResponse.getGetResult().sourceAsMap();
+            return sourceAsMap;
+        } catch (JsonProcessingException e) {
+            e.getMessage();
+        } catch (java.io.IOException e) {
+            e.getLocalizedMessage();
+        }
+        return error;
     }
 }

@@ -41,4 +41,9 @@ public class BookController {
     public Map<String, Object> updateBookById(@RequestBody Book book, @PathVariable String id) {
         return bookDao.updateBookById(id, book);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteBookById(@PathVariable String id) {
+        bookDao.deleteBookById(id);
+    }
 }

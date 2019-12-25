@@ -2,7 +2,6 @@ package com.hendisantika.springbootelasticsearchexample.controller;
 
 import com.hendisantika.springbootelasticsearchexample.domain.Book;
 import com.hendisantika.springbootelasticsearchexample.service.BookDao;
-import com.hendisantika.springbootelasticsearchexample.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +20,7 @@ import java.util.Map;
 @RequestMapping("/books")
 public class BookController {
     @Autowired
-    private BookService bookService;
-
-    @Autowired
     private BookDao bookDao;
-
 
     @PostMapping
     public Book insertBook(@RequestBody Book book) throws Exception {

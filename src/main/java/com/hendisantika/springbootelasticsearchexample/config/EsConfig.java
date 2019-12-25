@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
  * Time: 02.56
  */
 @Configuration
-public class EsConfig extends AbstractFactoryBean {
+public class EsConfig extends AbstractFactoryBean<RestHighLevelClient> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EsConfig.class);
 

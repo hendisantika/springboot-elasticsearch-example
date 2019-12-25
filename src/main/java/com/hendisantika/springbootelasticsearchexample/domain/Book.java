@@ -24,6 +24,7 @@ public class Book {
     private String id;
     private String title;
     private String author;
+    private float price;
     private String releaseDate;
 
 }

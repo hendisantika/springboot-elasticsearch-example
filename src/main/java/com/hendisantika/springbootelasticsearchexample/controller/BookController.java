@@ -4,10 +4,9 @@ import com.hendisantika.springbootelasticsearchexample.domain.Book;
 import com.hendisantika.springbootelasticsearchexample.service.BookDao;
 import com.hendisantika.springbootelasticsearchexample.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,5 +30,10 @@ public class BookController {
     @PostMapping
     public Book insertBook(@RequestBody Book book) throws Exception {
         return bookDao.insertBook(book);
+    }
+
+    @GetMapping("/{id}")
+    public Map<String, Object> getBookById(@PathVariable String id) {
+        return bookDao.getBookById(id);
     }
 }

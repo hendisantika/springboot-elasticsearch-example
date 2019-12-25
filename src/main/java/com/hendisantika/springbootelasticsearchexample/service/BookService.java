@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,7 +22,7 @@ public interface BookService {
 
     void delete(Book book);
 
-    Book findOne(String id);
+    Optional<Book> findById(String id);
 
     Iterable<Book> findAll();
 

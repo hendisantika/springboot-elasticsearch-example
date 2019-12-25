@@ -14,6 +14,7 @@ import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.springframework.data.elasticsearch.ElasticsearchException;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,8 @@ import java.util.UUID;
  * Date: 26/12/19
  * Time: 03.06
  */
+
+@Service
 public class BookDao {
     private final String INDEX = "bookdata";
     private final String TYPE = "books";

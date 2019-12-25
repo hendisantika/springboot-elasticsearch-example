@@ -2,6 +2,8 @@ package com.hendisantika.springbootelasticsearchexample.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hendisantika.springbootelasticsearchexample.domain.Book;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -43,5 +45,17 @@ public class BookDao {
             ex.getLocalizedMessage();
         }
         return book;
+    }
+
+    public Map<String, Object> getBookById(String id) {
+        GetRequest getRequest = new GetRequest(INDEX, TYPE, id);
+        GetResponse getResponse = null;
+        try {
+            getResponse = restHighLevelClient.get(getRequest);
+        } catch (java.io.IOException e) {
+            e.getLocalizedMessage();
+        }
+        Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
+        return sourceAsMap;
     }
 }

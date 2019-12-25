@@ -1,7 +1,14 @@
 package com.hendisantika.springbootelasticsearchexample.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hendisantika.springbootelasticsearchexample.domain.Book;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.springframework.data.elasticsearch.ElasticsearchException;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,5 +28,20 @@ public class BookDao {
     public BookDao(ObjectMapper objectMapper, RestHighLevelClient restHighLevelClient) {
         this.objectMapper = objectMapper;
         this.restHighLevelClient = restHighLevelClient;
+    }
+
+    public Book insertBook(Book book) {
+        book.setId(UUID.randomUUID().toString());
+        Map dataMap = objectMapper.convertValue(book, Map.class);
+        IndexRequest indexRequest = new IndexRequest(INDEX, TYPE, book.getId())
+                .source(dataMap);
+        try {
+            IndexResponse response = restHighLevelClient.index(indexRequest);
+        } catch (ElasticsearchException e) {
+            e.getMessage();
+        } catch (java.io.IOException ex) {
+            ex.getLocalizedMessage();
+        }
+        return book;
     }
 }

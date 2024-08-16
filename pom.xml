@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>elasticsearch-rest-client-sniffer</artifactId>
-			<version>8.14.0</version>
+			<version>8.15.0</version>
 		</dependency>
 
 		<dependency>

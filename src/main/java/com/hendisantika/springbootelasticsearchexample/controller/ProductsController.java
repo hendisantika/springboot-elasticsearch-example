@@ -4,7 +4,10 @@ import com.hendisantika.springbootelasticsearchexample.Repository.ProductReposit
 import com.hendisantika.springbootelasticsearchexample.domain.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,5 +47,11 @@ public class ProductsController {
             return productRepository.save(product);
         }
         throw new Exception("Id is required");
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> delete(@PathVariable("id") int id) {
+        productRepository.deleteById(id);
+        return ResponseEntity.ok("Deleted");
     }
 }

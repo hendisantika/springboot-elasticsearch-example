@@ -2,7 +2,9 @@ package com.hendisantika.springbootelasticsearchexample.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.hendisantika.springbootelasticsearchexample.domain.Book;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -11,11 +13,12 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.springframework.data.elasticsearch.ElasticsearchException;
+import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -34,8 +37,8 @@ import java.util.UUID;
 public class BookDao {
     private final String INDEX = "bookdata";
     private final String TYPE = "books";
-    private RestHighLevelClient restHighLevelClient;
-    private ObjectMapper objectMapper;
+    private final RestHighLevelClient restHighLevelClient;
+    private final ObjectMapper objectMapper;
 
     public BookDao(ObjectMapper objectMapper, RestHighLevelClient restHighLevelClient) {
         this.objectMapper = objectMapper;
@@ -45,10 +48,14 @@ public class BookDao {
     public Book insertBook(Book book) {
         book.setId(UUID.randomUUID().toString());
         Map dataMap = objectMapper.convertValue(book, Map.class);
-        IndexRequest indexRequest = new IndexRequest(INDEX, TYPE, book.getId())
-                .source(dataMap);
+//        IndexRequest indexRequest = new IndexRequest(INDEX, TYPE, book.getId())
+        IndexRequest indexRequest = new IndexRequest(INDEX).source(dataMap);
+        indexRequest.id(book.getId());
+        String jsonString = new Gson().toJson(book);
+        indexRequest.source(jsonString, XContentType.JSON);
+
         try {
-            IndexResponse response = restHighLevelClient.index(indexRequest);
+            IndexResponse response = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
         } catch (ElasticsearchException e) {
             e.getMessage();
         } catch (java.io.IOException ex) {
@@ -58,10 +65,10 @@ public class BookDao {
     }
 
     public Map<String, Object> getBookById(String id) {
-        GetRequest getRequest = new GetRequest(INDEX, TYPE, id);
+        GetRequest getRequest = new GetRequest(INDEX).id(id);
         GetResponse getResponse = null;
         try {
-            getResponse = restHighLevelClient.get(getRequest);
+            getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
         } catch (java.io.IOException e) {
             e.getLocalizedMessage();
         }
@@ -69,15 +76,15 @@ public class BookDao {
         return sourceAsMap;
     }
 
-    public Map<String, Object> updateBookById(String id, Book book) {
-        UpdateRequest updateRequest = new UpdateRequest(INDEX, TYPE, id)
+    public Map<String, Object> updateBookById(String id, Book book) throws IOException {
+        UpdateRequest updateRequest = new UpdateRequest(INDEX, id)
                 .fetchSource(true);    // Fetch Object after its update
         Map<String, Object> error = new HashMap<>();
         error.put("Error", "Unable to update book");
         try {
             String bookJson = objectMapper.writeValueAsString(book);
             updateRequest.doc(bookJson, XContentType.JSON);
-            UpdateResponse updateResponse = restHighLevelClient.update(updateRequest);
+            UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
             Map<String, Object> sourceAsMap = updateResponse.getGetResult().sourceAsMap();
             return sourceAsMap;
         } catch (JsonProcessingException e) {
@@ -89,9 +96,10 @@ public class BookDao {
     }
 
     public void deleteBookById(String id) {
-        DeleteRequest deleteRequest = new DeleteRequest(INDEX, TYPE, id);
+//        DeleteRequest deleteRequest = new DeleteRequest(INDEX, TYPE, id);
+        DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
         try {
-            DeleteResponse deleteResponse = restHighLevelClient.delete(deleteRequest);
+            DeleteResponse deleteResponse = restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
         } catch (java.io.IOException e) {
             e.getLocalizedMessage();
         }

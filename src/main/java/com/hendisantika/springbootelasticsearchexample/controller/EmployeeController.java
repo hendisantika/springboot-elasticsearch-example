@@ -37,4 +37,9 @@ public class EmployeeController {
     public Optional<Employee> findById(@PathVariable String id) {
         return repository.findById(id);
     }
+
+    @GetMapping
+    public Iterable<Employee> findAll() {
+        return repository.findAll();
+    }
 }

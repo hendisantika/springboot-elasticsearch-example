@@ -2,7 +2,6 @@ package com.hendisantika.springbootelasticsearchexample.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.hendisantika.springbootelasticsearchexample.domain.Book;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.delete.DeleteRequest;

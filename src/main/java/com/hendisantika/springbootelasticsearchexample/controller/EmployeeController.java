@@ -1,7 +1,10 @@
 package com.hendisantika.springbootelasticsearchexample.controller;
 
 import com.hendisantika.springbootelasticsearchexample.Repository.EmployeeRepository;
+import com.hendisantika.springbootelasticsearchexample.domain.Employee;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,4 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeController {
     private final EmployeeRepository repository;
+
+    @PostMapping
+    public Employee create(@RequestBody Employee employee) {
+        return repository.save(employee);
+    }
 }

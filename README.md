@@ -53,3 +53,9 @@ Retrieve an employee by ID:
 ```shell
 curl -X GET http://localhost:8080/api/employees/{id}
 ```
+
+Get all employees:
+
+```shell
+curl -X GET http://localhost:8080/api/employees
+```

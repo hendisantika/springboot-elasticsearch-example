@@ -1,8 +1,10 @@
 package com.hendisantika.springbootelasticsearchexample.controller;
 
 import com.hendisantika.springbootelasticsearchexample.Repository.ProductRepository;
+import com.hendisantika.springbootelasticsearchexample.domain.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,4 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ProductsController {
     private final ProductRepository productRepository;
+
+    @GetMapping("")
+    public Iterable<Product> findAll() {
+        return productRepository.findAll();
+    }
 }

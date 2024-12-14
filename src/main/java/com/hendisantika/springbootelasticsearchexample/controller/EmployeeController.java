@@ -3,6 +3,7 @@ package com.hendisantika.springbootelasticsearchexample.controller;
 import com.hendisantika.springbootelasticsearchexample.Repository.EmployeeRepository;
 import com.hendisantika.springbootelasticsearchexample.domain.Employee;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,4 +51,8 @@ public class EmployeeController {
         return repository.save(employee);
     }
 
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable String id) {
+        repository.deleteById(id);
+    }
 }

@@ -66,3 +66,8 @@ Update an employee:
 curl -X PUT -H "Content-Type: application/json" -d '{"firstName": "Jane", "lastName": "Doe", "department": "HR"}' http://localhost:8080/api/employees/{id}
 ```
 
+Delete an employee:
+
+```shell
+curl -X DELETE http://localhost:8080/api/employees/{id}
+```

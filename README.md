@@ -38,3 +38,12 @@ Example Request Body:
 ```
 
 For Delete Product ```DELETE localhost:8080/{id} ```  <br/>
+
+Test the RESTful API
+Use a REST client, like Postman or curl, to test the API endpoints. Here are some example curl commands:
+
+Create a new employee:
+
+```shell
+curl -X POST -H "Content-Type: application/json" -d '{"firstName": "John", "lastName": "Doe", "department": "Engineering"}' http://localhost:8080/api/employees
+```

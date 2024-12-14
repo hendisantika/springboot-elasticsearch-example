@@ -3,10 +3,14 @@ package com.hendisantika.springbootelasticsearchexample.controller;
 import com.hendisantika.springbootelasticsearchexample.Repository.EmployeeRepository;
 import com.hendisantika.springbootelasticsearchexample.domain.Employee;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,5 +31,10 @@ public class EmployeeController {
     @PostMapping
     public Employee create(@RequestBody Employee employee) {
         return repository.save(employee);
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Employee> findById(@PathVariable String id) {
+        return repository.findById(id);
     }
 }

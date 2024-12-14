@@ -47,3 +47,9 @@ Create a new employee:
 ```shell
 curl -X POST -H "Content-Type: application/json" -d '{"firstName": "John", "lastName": "Doe", "department": "Engineering"}' http://localhost:8080/api/employees
 ```
+
+Retrieve an employee by ID:
+
+```shell
+curl -X GET http://localhost:8080/api/employees/{id}
+```

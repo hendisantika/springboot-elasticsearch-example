@@ -1,21 +1,12 @@
 package com.hendisantika.springbootelasticsearchexample.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.ElasticsearchException;
+import co.elastic.clients.elasticsearch.core.DeleteResponse;
+import co.elastic.clients.elasticsearch.core.GetResponse;
+import co.elastic.clients.elasticsearch.core.IndexResponse;
+import co.elastic.clients.elasticsearch.core.UpdateResponse;
 import com.hendisantika.springbootelasticsearchexample.domain.Book;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.xcontent.XContentType;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,72 +26,62 @@ import java.util.UUID;
 
 @Service
 public class BookDao {
-    private final String INDEX = "bookdata";
-    private final String TYPE = "books";
-    private final RestHighLevelClient restHighLevelClient;
-    private final ObjectMapper objectMapper;
+    private static final String INDEX = "bookdata";
+    private final ElasticsearchClient elasticsearchClient;
 
-    public BookDao(ObjectMapper objectMapper, RestHighLevelClient restHighLevelClient) {
-        this.objectMapper = objectMapper;
-        this.restHighLevelClient = restHighLevelClient;
+    public BookDao(ElasticsearchClient elasticsearchClient) {
+        this.elasticsearchClient = elasticsearchClient;
     }
 
     public Book insertBook(Book book) {
         book.setId(UUID.randomUUID().toString());
-        Map dataMap = objectMapper.convertValue(book, Map.class);
-//        IndexRequest indexRequest = new IndexRequest(INDEX, TYPE, book.getId())
-        IndexRequest indexRequest = new IndexRequest(INDEX).source(dataMap);
-        indexRequest.id(book.getId());
-        String jsonString = new Gson().toJson(book);
-        indexRequest.source(jsonString, XContentType.JSON);
-
         try {
-            IndexResponse response = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
+            IndexResponse response = elasticsearchClient.index(i -> i
+                    .index(INDEX)
+                    .id(book.getId())
+                    .document(book));
         } catch (ElasticsearchException e) {
             e.getMessage();
-        } catch (java.io.IOException ex) {
+        } catch (IOException ex) {
             ex.getLocalizedMessage();
         }
         return book;
     }
 
     public Map<String, Object> getBookById(String id) {
-        GetRequest getRequest = new GetRequest(INDEX).id(id);
-        GetResponse getResponse = null;
         try {
-            getResponse = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
-        } catch (java.io.IOException e) {
+            GetResponse<Map> response = elasticsearchClient.get(g -> g.index(INDEX).id(id), Map.class);
+            return response.source();
+        } catch (IOException e) {
             e.getLocalizedMessage();
         }
-        Map<String, Object> sourceAsMap = getResponse.getSourceAsMap();
-        return sourceAsMap;
+        return null;
     }
 
     public Map<String, Object> updateBookById(String id, Book book) throws IOException {
-        UpdateRequest updateRequest = new UpdateRequest(INDEX, id)
-                .fetchSource(true);    // Fetch Object after its update
         Map<String, Object> error = new HashMap<>();
         error.put("Error", "Unable to update book");
         try {
-            String bookJson = objectMapper.writeValueAsString(book);
-            updateRequest.doc(bookJson, XContentType.JSON);
-            UpdateResponse updateResponse = restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
-            Map<String, Object> sourceAsMap = updateResponse.getGetResult().sourceAsMap();
-            return sourceAsMap;
-        } catch (JsonProcessingException e) {
+            UpdateResponse<Map> response = elasticsearchClient.update(u -> u
+                    .index(INDEX)
+                    .id(id)
+                    .doc(book)
+                    .source(s -> s.fetch(true)), Map.class);
+            if (response.get() != null) {
+                return response.get().source();
+            }
+        } catch (ElasticsearchException e) {
             e.getMessage();
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.getLocalizedMessage();
         }
         return error;
     }
 
     public void deleteBookById(String id) {
-//        DeleteRequest deleteRequest = new DeleteRequest(INDEX, TYPE, id);
-        DeleteRequest deleteRequest = new DeleteRequest(INDEX, id);
         try {
-            DeleteResponse deleteResponse = restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
-        } catch (java.io.IOException e) {
+            DeleteResponse response = elasticsearchClient.delete(d -> d.index(INDEX).id(id));
+        } catch (IOException e) {
             e.getLocalizedMessage();
         }
     }

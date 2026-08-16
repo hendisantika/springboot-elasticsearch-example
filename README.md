@@ -1,12 +1,18 @@
 # springboot-elasticsearch-example
 
+## Requirements
+
+- JDK 25
+- Docker (for running Elasticsearch, either via `compose.yml` or manually)
+
 ## Things todo list
 
-- Download: ` git clonehttps://github.com/hendisantika/springboot-elasticsearch-example.git`
-- I used Elasticsearch   ` 8.17.0 `, in other versions you can get error.
+- Download: ` git clone https://github.com/hendisantika/springboot-elasticsearch-example.git`
+- I used Elasticsearch ` 9.5.0 `, in other versions you can get error.
 - Docker command for up your image:
-  ` docker run  -p 9200:9200  -p 9300:9300  -e "discovery.type=single-node"  -e "xpack.security.enabled=false"  docker.elastic.co/elasticsearch/elasticsearch:8.17.0 `
+  ` docker run  -p 9200:9200  -p 9300:9300  -e "discovery.type=single-node"  -e "xpack.security.enabled=false"  docker.elastic.co/elasticsearch/elasticsearch:9.5.0 `
 - If you want basic auth, you can remove ` -e "xpack.security.enabled=false" ` from command.
+- Alternatively, Spring Boot's Docker Compose support will start Elasticsearch automatically from `compose.yml` when you run the app locally.
 
 ## Endpoints
 

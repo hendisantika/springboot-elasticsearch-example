@@ -13,7 +13,7 @@ services:
       - discovery.type=single-node
       - cluster.name=elasticsearch
       # Since ES 8, SSL is on by default, disabling on local
-      - xpack.security.enabled=true
+      - xpack.security.enabled=false
       - bootstrap.memory_lock=true
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
